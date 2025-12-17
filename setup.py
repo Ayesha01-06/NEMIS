@@ -82,29 +82,45 @@ def create_database():
             check=False
         )
 
-        database_exists = 'NEMIS' in result.stdout
+        # Check for both uppercase and lowercase versions
+        database_exists_upper = 'NEMIS' in result.stdout
+        database_exists_lower = 'nemis' in result.stdout and 'NEMIS' not in result.stdout
 
-        if database_exists:
-            print("✓ Checking if NEMIS database exists - Database found")
+        if database_exists_upper:
+            print("✓ Checking if NEMIS database exists - Database found (uppercase)")
             print("\n⚠️  Database NEMIS already exists!")
             response = input("Drop and recreate? (yes/no): ").strip().lower()
             if response == 'yes':
                 run_command(
-                    'psql -U postgres -c "DROP DATABASE NEMIS;"',
+                    'psql -U postgres -c "DROP DATABASE \\"NEMIS\\";"',
                     "Dropping existing database",
                     check=False
                 )
             else:
                 print("✓ Using existing database")
                 return True
+        elif database_exists_lower:
+            print("✓ Checking if database exists - Found 'nemis' (lowercase)")
+            print("\n⚠️  Database 'nemis' exists but we need 'NEMIS' (uppercase)")
+            response = input("Drop 'nemis' and create 'NEMIS'? (yes/no): ").strip().lower()
+            if response == 'yes':
+                run_command(
+                    'psql -U postgres -c "DROP DATABASE nemis;"',
+                    "Dropping lowercase 'nemis' database",
+                    check=False
+                )
+            else:
+                print("✗ Cannot proceed with lowercase database name")
+                return False
         else:
             print("✓ Checking if NEMIS database exists - Not found, will create")
     except Exception as e:
         print(f"⚠️  Could not check existing databases: {e}")
         print("   Attempting to create database anyway...")
 
+    # Use quotes to preserve uppercase name
     return run_command(
-        'psql -U postgres -c "CREATE DATABASE NEMIS;"',
+        'psql -U postgres -c "CREATE DATABASE \\"NEMIS\\";"',
         "Creating NEMIS database"
     )
 
