@@ -549,13 +549,13 @@ def regions():
     cur = conn.cursor()
     
     cur.execute("""
-        SELECT r.Region_ID, r.name, r.description,
+        SELECT r.Region_ID, r.name,
                COUNT(DISTINCT v.Voter_ID) as voter_count,
                COUNT(DISTINCT c.Candidate_ID) as candidate_count
         FROM Region r
         LEFT JOIN Voter v ON r.Region_ID = v.Region_ID
         LEFT JOIN Candidate c ON r.Region_ID = c.Region_ID
-        GROUP BY r.Region_ID, r.name, r.description
+        GROUP BY r.Region_ID, r.name
         ORDER BY r.name
     """)
     regions = cur.fetchall()

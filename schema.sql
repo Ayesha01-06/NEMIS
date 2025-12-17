@@ -44,7 +44,6 @@ CREATE TABLE User_account (
 CREATE TABLE Region (
     Region_ID SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
-    description TEXT,
     population INTEGER CHECK (population >= 0),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -513,19 +512,19 @@ ORDER BY e.start_date DESC;
 -- ============================================================
 
 -- Moroccan Regions
-INSERT INTO Region (name, description, population) VALUES
-('Tangier-Tetouan-Al Hoceima', 'Northern region', 3800000),
-('Oriental', 'Eastern region', 2300000),
-('Fès-Meknès', 'Historical region', 4200000),
-('Rabat-Salé-Kénitra', 'Capital region', 4600000),
-('Béni Mellal-Khénifra', 'Central region', 2500000),
-('Casablanca-Settat', 'Economic capital', 6800000),
-('Marrakech-Safi', 'Tourism region', 4500000),
-('Drâa-Tafilalet', 'Southern region', 1600000),
-('Souss-Massa', 'Coastal south', 2700000),
-('Guelmim-Oued Noun', 'Southern desert', 450000),
-('Laâyoune-Sakia El Hamra', 'Southern provinces', 400000),
-('Dakhla-Oued Ed-Dahab', 'Southern provinces', 150000);
+INSERT INTO Region (name, population) VALUES
+('Tangier-Tetouan-Al Hoceima', 3800000),
+('Oriental', 2300000),
+('Fès-Meknès', 4200000),
+('Rabat-Salé-Kénitra', 4600000),
+('Béni Mellal-Khénifra', 2500000),
+('Casablanca-Settat', 6800000),
+('Marrakech-Safi', 4500000),
+('Drâa-Tafilalet', 1600000),
+('Souss-Massa', 2700000),
+('Guelmim-Oued Noun', 450000),
+('Laâyoune-Sakia El Hamra', 400000),
+('Dakhla-Oued Ed-Dahab', 150000);
 
 -- Admin Users
 INSERT INTO User_account (CNIE, name, role, is_active) VALUES
