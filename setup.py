@@ -71,27 +71,38 @@ def check_postgres():
 def create_database():
     """Create NEMIS database"""
     print_step(2, "Creating NEMIS Database")
-    
-    # Check if database exists
-    check = run_command(
-        'psql -U postgres -lqt | cut -d "|" -f 1 | grep -qw NEMIS',
-        "Checking if NEMIS database exists",
-        check=False
-    )
-    
-    if check:
-        print("\n⚠️  Database NEMIS already exists!")
-        response = input("Drop and recreate? (yes/no): ").strip().lower()
-        if response == 'yes':
-            run_command(
-                'psql -U postgres -c "DROP DATABASE NEMIS;"',
-                "Dropping existing database",
-                check=False
-            )
+
+    # Check if database exists using Python-based approach
+    print("Running: Checking if NEMIS database exists")
+    try:
+        result = subprocess.run(
+            ['psql', '-U', 'postgres', '-lqt'],
+            capture_output=True,
+            text=True,
+            check=False
+        )
+
+        database_exists = 'NEMIS' in result.stdout
+
+        if database_exists:
+            print("✓ Checking if NEMIS database exists - Database found")
+            print("\n⚠️  Database NEMIS already exists!")
+            response = input("Drop and recreate? (yes/no): ").strip().lower()
+            if response == 'yes':
+                run_command(
+                    'psql -U postgres -c "DROP DATABASE NEMIS;"',
+                    "Dropping existing database",
+                    check=False
+                )
+            else:
+                print("✓ Using existing database")
+                return True
         else:
-            print("✓ Using existing database")
-            return True
-    
+            print("✓ Checking if NEMIS database exists - Not found, will create")
+    except Exception as e:
+        print(f"⚠️  Could not check existing databases: {e}")
+        print("   Attempting to create database anyway...")
+
     return run_command(
         'psql -U postgres -c "CREATE DATABASE NEMIS;"',
         "Creating NEMIS database"
