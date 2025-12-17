@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audit Log - NEMIS Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .container { max-width: 1400px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background: #ecf0f1; font-weight: bold; position: sticky; top: 0; }
+        .table-container { max-height: 600px; overflow-y: auto; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - Audit Log</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/audit">Audit Log</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Recent System Activity (Last 100 entries)</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Log ID</th>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                            <th>Table</th>
+                            <th>Timestamp</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log[0] }}</td>
+                            <td>{{ log[1] or 'System' }}</td>
+                            <td>{{ log[2] or '-' }}</td>
+                            <td>{{ log[3] }}</td>
+                            <td>{{ log[4] or '-' }}</td>
+                            <td>{{ log[5] }}</td>
+                            <td>{{ log[6] or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

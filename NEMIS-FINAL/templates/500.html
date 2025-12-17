@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | NEMIS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: var(--spacing-md);
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            color: var(--danger-color);
+            line-height: 1;
+            margin-bottom: var(--spacing-md);
+        }
+        .error-message {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: var(--spacing-md);
+        }
+        .error-description {
+            color: var(--text-light);
+            margin-bottom: var(--spacing-lg);
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <div class="error-message">Internal Server Error</div>
+        <p class="error-description">
+            Something went wrong on our end. Our team has been notified and is working to fix the issue.
+            Please try again later.
+        </p>
+        <div class="d-flex gap-2">
+            <a href="/" class="btn btn-primary">Go to Home</a>
+            <a href="javascript:location.reload()" class="btn btn-secondary">Reload Page</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results - NEMIS Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .election-list { display: grid; gap: 15px; }
+        .election-card { border: 1px solid #ddd; padding: 15px; border-radius: 4px; }
+        .btn { padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; display: inline-block; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - Election Results</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/elections">Elections</a>
+        <a href="/admin/results">Results</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Select an Election to View Results</h2>
+            <div class="election-list">
+                {% for election in elections %}
+                <div class="election-card">
+                    <h3>{{ election[1] }}</h3>
+                    <p><strong>Election ID:</strong> {{ election[0] }}</p>
+                    <a href="/admin/results/{{ election[0] }}" class="btn">View Results</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
