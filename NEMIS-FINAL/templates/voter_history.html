@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voting History - NEMIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background: #ecf0f1; font-weight: bold; }
+        .btn { padding: 8px 16px; text-decoration: none; display: inline-block; background: #34495e; color: white; border-radius: 4px; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - Voting History</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="/voter/dashboard">Dashboard</a>
+        <a href="/voter/history">Voting History</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>Your Voting History</h2>
+            {% if history %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Election</th>
+                        <th>Type</th>
+                        <th>Candidate</th>
+                        <th>Party</th>
+                        <th>Vote Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vote in history %}
+                    <tr>
+                        <td>{{ vote[0] }}</td>
+                        <td>{{ vote[1] }}</td>
+                        <td>{{ vote[3] }}</td>
+                        <td>{{ vote[4] or 'Independent' }}</td>
+                        <td>{{ vote[2] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>You have not voted in any elections yet.</p>
+            {% endif %}
+            <br>
+            <a href="/voter/dashboard" class="btn">Back to Dashboard</a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

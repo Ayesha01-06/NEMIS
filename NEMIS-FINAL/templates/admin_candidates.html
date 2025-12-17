@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candidates - NEMIS Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background: #ecf0f1; font-weight: bold; }
+        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; margin: 2px; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .status-approved { color: #27ae60; font-weight: bold; }
+        .status-pending { color: #f39c12; font-weight: bold; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - Candidate Management</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/elections">Elections</a>
+        <a href="/admin/candidates">Candidates</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/regions">Regions</a>
+        <a href="/admin/results">Results</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <h2>All Candidates</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>CNIE</th>
+                        <th>Party</th>
+                        <th>Region</th>
+                        <th>Election</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                    <tr>
+                        <td>{{ candidate[0] }}</td>
+                        <td>{{ candidate[1] }}</td>
+                        <td>{{ candidate[2] }}</td>
+                        <td>{{ candidate[3] or 'Independent' }}</td>
+                        <td>{{ candidate[4] }}</td>
+                        <td>{{ candidate[5] }}</td>
+                        <td class="{% if candidate[6] %}status-approved{% else %}status-pending{% endif %}">
+                            {% if candidate[6] %}Approved{% else %}Pending{% endif %}
+                        </td>
+                        <td>
+                            {% if not candidate[6] %}
+                            <form method="POST" action="/admin/candidates/{{ candidate[0] }}/approve" style="display:inline;" onsubmit="return confirm('Approve {{ candidate[1] }} as a candidate?')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="btn btn-success">Approve</button>
+                            </form>
+                            <form method="POST" action="/admin/candidates/{{ candidate[0] }}/reject" style="display:inline;" onsubmit="return confirm('Reject {{ candidate[1] }}\'s candidacy?')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <button type="submit" class="btn btn-danger">Reject</button>
+                            </form>
+                            {% else %}
+                            <span style="color: #27ae60;">✓ Approved</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

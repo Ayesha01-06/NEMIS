@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NEMIS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>NEMIS</h1>
+                <p>National Election Management Information System</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/login">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="form-group">
+                    <label for="cnie" class="form-label required">CNIE</label>
+                    <input 
+                        type="text" 
+                        id="cnie" 
+                        name="CNIE" 
+                        class="form-control" 
+                        placeholder="e.g., AD123456"
+                        maxlength="8"
+                        required
+                        autofocus
+                    >
+                    <p class="form-help">Enter your 8-character CNIE (2 letters + 6 digits)</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p class="form-help">
+                    Default Admin: AD123456<br>
+                    Default Officer: EO123456
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

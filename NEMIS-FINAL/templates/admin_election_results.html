@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Election Results - NEMIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background: #ecf0f1; font-weight: bold; }
+        .progress-bar { width: 100%; background: #ecf0f1; height: 25px; border-radius: 4px; overflow: hidden; }
+        .progress-fill { background: #3498db; height: 100%; text-align: center; line-height: 25px; color: white; font-weight: bold; }
+        h2 { color: #2c3e50; margin-bottom: 15px; }
+        .election-info { background: #ecf0f1; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - Election Results</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/elections">Elections</a>
+        <a href="/admin/results">Results</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <div class="election-info">
+                <h2>{{ election[0] }}</h2>
+                <p><strong>Type:</strong> {{ election[1] }} | <strong>Status:</strong> {{ election[2] }}</p>
+            </div>
+            
+            <h2>Candidate Results</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Party</th>
+                        <th>Region</th>
+                        <th>Votes</th>
+                        <th>Percentage</th>
+                        <th>Visual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result[0] }}</td>
+                        <td>{{ result[1] or 'Independent' }}</td>
+                        <td>{{ result[2] }}</td>
+                        <td>{{ result[3] }}</td>
+                        <td>{{ result[4] }}%</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ result[4] }}%;">{{ result[4] }}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>Voter Turnout by Region</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Region</th>
+                        <th>Voters Who Voted</th>
+                        <th>Total Registered Voters</th>
+                        <th>Turnout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in turnout %}
+                    <tr>
+                        <td>{{ t[0] }}</td>
+                        <td>{{ t[1] }}</td>
+                        <td>{{ t[2] }}</td>
+                        <td>
+                            {% if t[2] > 0 %}
+                            {{ "%.2f"|format((t[1] / t[2] * 100)) }}%
+                            {% else %}
+                            0.00%
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
