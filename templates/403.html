@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Forbidden | NEMIS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: var(--spacing-md);
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            color: var(--warning-color);
+            line-height: 1;
+            margin-bottom: var(--spacing-md);
+        }
+        .error-message {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: var(--spacing-md);
+        }
+        .error-description {
+            color: var(--text-light);
+            margin-bottom: var(--spacing-lg);
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">403</div>
+        <div class="error-message">Access Forbidden</div>
+        <p class="error-description">
+            You don't have permission to access this resource. Please login with appropriate credentials.
+        </p>
+        <div class="d-flex gap-2">
+            <a href="/login" class="btn btn-primary">Go to Login</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+    </div>
+</body>
+</html>
