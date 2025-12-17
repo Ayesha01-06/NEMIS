@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candidates - NEMIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .election-info { background: #ecf0f1; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .candidate-card { border: 1px solid #ddd; padding: 20px; border-radius: 4px; margin-bottom: 15px; }
+        .candidate-card h3 { margin-bottom: 10px; color: #2c3e50; }
+        .candidate-card p { margin-bottom: 8px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-disabled { background: #95a5a6; color: white; cursor: not-allowed; }
+        .btn-secondary { background: #34495e; color: white; }
+        .alert { padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .alert-warning { background: #f39c12; color: white; }
+        .alert-success { background: #27ae60; color: white; }
+        .voted-indicator { background: #27ae60; color: white; padding: 10px; border-radius: 4px; margin-bottom: 20px; text-align: center; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - View Candidates</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="/voter/dashboard">Dashboard</a>
+        <a href="/voter/history">Voting History</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            {% if election %}
+            <div class="election-info">
+                <h2>{{ election[0] }}</h2>
+                <p><strong>Type:</strong> {{ election[1] }} | <strong>Status:</strong> {{ election[2] }}</p>
+                <p><strong>Voting Period:</strong> {{ election[3] }} to {{ election[4] }}</p>
+            </div>
+            {% endif %}
+            
+            {% if not eligible %}
+            <div class="alert alert-warning">
+                <strong>Notice:</strong> {{ message }}
+            </div>
+            {% endif %}
+            
+            {% if voted_for %}
+            <div class="voted-indicator">
+                <strong>✓ You have already voted in this election</strong>
+            </div>
+            {% endif %}
+            
+            <h2>Candidates</h2>
+            {% if candidates %}
+                {% for candidate in candidates %}
+                <div class="candidate-card">
+                    <h3>{{ candidate[1] }}</h3>
+                    <p><strong>Party:</strong> {{ candidate[2] or 'Independent' }}</p>
+                    <p><strong>Region:</strong> {{ candidate[4] }}</p>
+                    {% if candidate[3] %}
+                    <p><strong>Manifesto:</strong> {{ candidate[3] }}</p>
+                    {% endif %}
+                    
+                    {% if voted_for == candidate[0] %}
+                        <button class="btn btn-success" disabled>✓ You voted for this candidate</button>
+                    {% elif eligible and not voted_for and election[2] == 'Active' %}
+                        <form method="POST" action="/voter/vote" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <input type="hidden" name="candidate_id" value="{{ candidate[0] }}">
+                            <input type="hidden" name="election_id" value="{{ election_id }}">
+                            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to vote for {{ candidate[1] }}? This action cannot be undone.')">Vote for this Candidate</button>
+                        </form>
+                    {% else %}
+                        <button class="btn btn-disabled" disabled>Voting Not Available</button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No approved candidates available for this election in your region.</p>
+            {% endif %}
+            
+            <br>
+            <a href="/voter/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

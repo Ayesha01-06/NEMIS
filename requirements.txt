@@ -1,0 +1,20 @@
+# NEMIS - National Election Management Information System
+# Python Dependencies
+
+# Core Framework
+flask>=3.0.0
+werkzeug>=3.0.0
+
+# Database
+psycopg2-binary>=2.9.0
+
+# Security & Forms
+flask-wtf>=1.2.0
+
+# Optional but recommended for production
+gunicorn>=21.2.0  # Production WSGI server
+python-dotenv>=1.0.0  # Environment variables management
+
+# Development dependencies (optional)
+# pytest>=7.4.0  # Testing framework
+# flask-testing>=0.8.1  # Flask testing utilities

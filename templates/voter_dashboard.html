@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voter Dashboard - NEMIS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .header { background: #2c3e50; color: white; padding: 20px; }
+        .nav { background: #34495e; padding: 10px 20px; }
+        .nav a { color: white; text-decoration: none; margin-right: 20px; padding: 5px 10px; }
+        .nav a:hover { background: #2c3e50; border-radius: 3px; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
+        .section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .info-card { background: #ecf0f1; padding: 15px; border-radius: 4px; margin-bottom: 20px; }
+        .election-card { border: 1px solid #ddd; padding: 15px; border-radius: 4px; margin-bottom: 15px; }
+        .election-card h3 { margin-bottom: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-disabled { background: #95a5a6; color: white; cursor: not-allowed; }
+        .status { padding: 4px 8px; border-radius: 3px; font-size: 12px; margin-left: 10px; }
+        .status-active { background: #27ae60; color: white; }
+        .status-planned { background: #3498db; color: white; }
+        .status-voted { background: #f39c12; color: white; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="header">
+        <h1>NEMIS - Voter Dashboard</h1>
+        <p>Welcome!</p>
+    </div>
+    
+    <div class="nav">
+        <a href="/voter/dashboard">Dashboard</a>
+        <a href="/voter/history">Voting History</a>
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    </div>
+    
+    <div class="container">
+        <div class="section">
+            <div class="info-card">
+                <h3>Your Information</h3>
+                <p><strong>Voter ID:</strong> {{ voter_id }}</p>
+                <p><strong>Region:</strong> {{ region_name }}</p>
+                <p><strong>Eligibility:</strong> {% if is_eligible %}Eligible to Vote{% else %}Not Eligible{% endif %}</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Available Elections</h2>
+            {% if elections %}
+                {% for election in elections %}
+                <div class="election-card">
+                    <h3>
+                        {{ election[1] }}
+                        <span class="status status-{{ election[5]|lower }}">{{ election[5] }}</span>
+                        {% if election[0] in voted_elections %}
+                        <span class="status status-voted">Already Voted</span>
+                        {% endif %}
+                    </h3>
+                    <p><strong>Type:</strong> {{ election[2] }}</p>
+                    <p><strong>Start:</strong> {{ election[3] }}</p>
+                    <p><strong>End:</strong> {{ election[4] }}</p>
+                    
+                    {% if election[0] in voted_elections %}
+                        <button class="btn btn-disabled" disabled>You have already voted</button>
+                    {% elif election[5] == 'Active' %}
+                        <a href="/voter/election/{{ election[0] }}/candidates" class="btn btn-success">View Candidates & Vote</a>
+                    {% else %}
+                        <a href="/voter/election/{{ election[0] }}/candidates" class="btn btn-primary">View Candidates</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No elections available in your region at this time.</p>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
