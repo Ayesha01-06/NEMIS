@@ -1,0 +1,19 @@
+# NEMIS - National Election Management Information System
+# Python Dependencies for Windows
+
+# Core Framework
+flask>=3.0.0
+werkzeug>=3.0.0
+
+# Database
+psycopg2-binary>=2.9.0
+
+# Security & Forms
+flask-wtf>=1.2.0
+
+# Environment variables management
+python-dotenv>=1.0.0
+
+# Note: gunicorn is not available on Windows
+# For Windows development, use: python nemis.py
+# For Windows production, use: waitress-serve --host=127.0.0.1 --port=5000 nemis:app

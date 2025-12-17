@@ -195,15 +195,63 @@ def check_python():
 def install_dependencies():
     """Install Python dependencies"""
     print_step(6, "Installing Python Dependencies")
-    
+
     if not os.path.exists('requirements.txt'):
         print("✗ requirements.txt not found")
         return False
-    
-    return run_command(
-        f'{sys.executable} -m pip install -r requirements.txt',
-        "Installing Flask, psycopg2, and other dependencies"
-    )
+
+    # Show actual pip output for debugging
+    print(f"Running: {sys.executable} -m pip install -r requirements.txt")
+    try:
+        result = subprocess.run(
+            f'{sys.executable} -m pip install -r requirements.txt',
+            shell=True,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+
+        if result.stdout:
+            print(result.stdout)
+        if result.stderr:
+            print(result.stderr)
+
+        if result.returncode != 0:
+            print("\n⚠️  Some packages failed to install.")
+            print("This might be due to gunicorn (Linux-only) on Windows.")
+            print("\nTrying to install essential packages only...")
+
+            # Install essential packages one by one
+            essential = ['flask>=3.0.0', 'werkzeug>=3.0.0', 'psycopg2-binary>=2.9.0', 'flask-wtf>=1.2.0']
+            failed = []
+
+            for package in essential:
+                result = subprocess.run(
+                    f'{sys.executable} -m pip install "{package}"',
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    check=False
+                )
+                if result.returncode == 0:
+                    print(f"✓ Installed {package}")
+                else:
+                    print(f"✗ Failed to install {package}")
+                    failed.append(package)
+
+            if failed:
+                print(f"\n✗ Failed packages: {', '.join(failed)}")
+                return False
+            else:
+                print("\n✓ All essential packages installed successfully!")
+                return True
+        else:
+            print("✓ All packages installed successfully!")
+            return True
+
+    except Exception as e:
+        print(f"✗ Error during installation: {e}")
+        return False
 
 def test_database():
     """Run database tests"""
